@@ -1,42 +1,44 @@
-import { Col, Row, Input, Button, Select, Tag } from "antd";
-import Todo from "../Todo";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Col, Row, Input, Button, Select, Tag } from 'antd';
+import Todo from '../Todo';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // import { addTodo } from "../../store/actions";
-import { v4 as uuidv4 } from "uuid";
-import { selectorTodoList } from "../../store/selectors";
-import todolistSlice from "./todolistSlice";
-
+import { v4 as uuidv4 } from 'uuid';
+import { selectorTodoList } from '../../store/selectors';
+// import todolistSlice, {addTodos} from "./todolistSlice";
+import { addNewTodo, getTodos } from './todolistSlice';
 
 export default function TodoList() {
     const dispatch = useDispatch();
-    const [todoName, setTodoName] = useState("");
-    const [priority, setPriority] = useState("Medium");
-    
+    const [todoName, setTodoName] = useState('');
+    const [priority, setPriority] = useState('Medium');
+
     const todoList = useSelector(selectorTodoList);
-    
-  console.log( todoList)
+    useEffect(() => {
+        dispatch(getTodos());
+    }, []);
+   
     const handleAddButtonClick = () => {
         dispatch(
-            todolistSlice.actions.addTodo({
+            addNewTodo({
                 id: uuidv4(),
                 name: todoName,
                 priority: priority,
                 completed: false,
-            })
+            }),
         );
-        setTodoName("");
-        setPriority("Medium");
+        setTodoName('');
+        setPriority('Medium');
     };
 
     return (
-        <Row style={{ height: "calc(100% - 350px)" }}>
+        <Row style={{ height: 'calc(100% - 350px)' }}>
             <Col
                 span={24}
                 style={{
-                    height: "100%",
-                    overflowY: "auto",
-                    marginBottom: "20px",
+                    height: '100%',
+                    overflowY: 'auto',
+                    marginBottom: '20px',
                 }}
             >
                 {todoList.map((todo) => {
@@ -52,7 +54,7 @@ export default function TodoList() {
                 })}
             </Col>
             <Col span={24}>
-                <Input.Group style={{ display: "flex" }} compact>
+                <Input.Group style={{ display: 'flex' }} compact>
                     <Input
                         value={todoName}
                         onChange={(e) => setTodoName(e.target.value)}
