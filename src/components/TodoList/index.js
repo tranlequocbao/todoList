@@ -1,12 +1,17 @@
 import { Col, Row, Input, Button, Select, Tag } from 'antd';
 import Todo from '../Todo';
+import { LoadingOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import { addTodo } from "../../store/actions";
 import { v4 as uuidv4 } from 'uuid';
-import { selectorTodoList } from '../../store/selectors';
+import {
+    selectorStatusTodoList,
+    selectorTodoList,
+} from '../../store/selectors';
 // import todolistSlice, {addTodos} from "./todolistSlice";
 import { addNewTodo, getTodos } from './todolistSlice';
+import '../../style/todoList.css';
 
 export default function TodoList() {
     const dispatch = useDispatch();
@@ -14,10 +19,11 @@ export default function TodoList() {
     const [priority, setPriority] = useState('Medium');
 
     const todoList = useSelector(selectorTodoList);
+    const statusLoading = useSelector(selectorStatusTodoList);
     useEffect(() => {
         dispatch(getTodos());
     }, []);
-   
+
     const handleAddButtonClick = () => {
         dispatch(
             addNewTodo({
@@ -37,21 +43,36 @@ export default function TodoList() {
                 span={24}
                 style={{
                     height: '100%',
+                    width:'100%',
                     overflowY: 'auto',
                     marginBottom: '20px',
                 }}
             >
-                {todoList.map((todo) => {
-                    return (
-                        <Todo
-                            name={todo.name}
-                            key={todo.id}
-                            priority={todo.priority}
-                            completed={todo.completed}
-                            id={todo.id}
-                        />
-                    );
-                })}
+                {statusLoading !== 'loading' ? (
+                    todoList.map((todo) => {
+                        return (
+                            <Todo
+                                name={todo.name}
+                                key={todo.id}
+                                priority={todo.priority}
+                                completed={todo.completed}
+                                id={todo.id}
+                            />
+                        );
+                    })
+                ) : (
+                    <div
+                        className="container-loader"
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%',
+                        }}
+                    >
+                        <div className="custom-loader"></div>
+                    </div>
+                )}
             </Col>
             <Col span={24}>
                 <Input.Group style={{ display: 'flex' }} compact>

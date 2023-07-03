@@ -19,7 +19,6 @@ const todosSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(getTodos.fulfilled, (state, action) => {
-                console.log(action);
                 state.todoList = action.payload;
                 state.status = 'idle';
             })
@@ -46,11 +45,34 @@ const todosSlice = createSlice({
     },
 });
 export default todosSlice;
-export const getTodos = createAsyncThunk('todos/fetchTodos', async () => {
-    let data = await axios.get('http://10.40.12.4:3005/todoList/getTodos');
-    console.log(data);
-    return data.data;
-});
+// export const getTodos = createAsyncThunk(
+//     'todos/fetchTodos',
+//     async (_, { dispatch }) => {
+//         return new Promise((resolve, reject) => {
+//             setTimeout(async () => {
+//                 try {
+//                     const response = await axios.get(
+//                         'http://10.40.12.4:3005/todoList/getTodos',
+//                     );
+//                     resolve(response.data);
+//                 } catch (error) {
+//                     reject(error);
+//                 }
+//             }, 5000);
+//         });
+//     },
+// );
+export const getTodos =createAsyncThunk('todos/fetchTodos',async()=>{
+    try{
+        const todo =  await axios('http://10.40.12.4:3005/todoList/getTodos')
+        if(todo) return todo.data
+        return false
+    }
+    catch(error){
+        console.log(error)
+        return false
+    }
+})
 export const addNewTodo = createAsyncThunk(
     'todos/addNewTodo',
     async (todoNew) => {
@@ -58,7 +80,6 @@ export const addNewTodo = createAsyncThunk(
             'http://10.40.12.4:3005/todoList/insertTodo',
             { data: todoNew },
         );
-        console.log(data);
         if (data.data === true && data.status === 200) {
             return todoNew;
         } else {
