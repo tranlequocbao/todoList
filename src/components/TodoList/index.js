@@ -3,13 +3,11 @@ import Todo from '../Todo';
 import { LoadingOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { addTodo } from "../../store/actions";
 import { v4 as uuidv4 } from 'uuid';
 import {
     selectorStatusTodoList,
     selectorTodoList,
 } from '../../store/selectors';
-// import todolistSlice, {addTodos} from "./todolistSlice";
 import { addNewTodo, getTodos } from './todolistSlice';
 import '../../style/todoList.css';
 

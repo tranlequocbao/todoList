@@ -26,7 +26,8 @@ export const selectorTodoList = createSelector(
         }
         if (todoList.length > 0) {
             todoList = todoList.filter((val) =>
-                val.name.toLowerCase().includes(text.toLowerCase()),
+             val.name.toLowerCase().includes(text.toLowerCase()),
+
             );
         } else todoList = [];
         return todoList;

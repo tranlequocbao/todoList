@@ -13,7 +13,7 @@ import todoListSlice from '../components/TodoList/todolistSlice'
 
 const store = configureStore({
     reducer:{
-        filters:filtersSlice.reducer,
+        filters: filtersSlice.reducer,
         todoList: todoListSlice.reducer
     }
 })

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { callApi } from '../../ultil/ultil';
+
 const todosSlice = createSlice({
     name: 'todoList',
     initialState: { status: 'idle', todoList: [] },
@@ -26,8 +27,9 @@ const todosSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(addNewTodo.fulfilled, (state, action) => {
+
+                if(action.payload)
                 state.todoList.push(action.payload);
-                console.log(action.payload);
                 state.status = 'idle';
             })
             .addCase(toggleTodoStatusNew.pending, (state, action) => {
@@ -64,44 +66,67 @@ export default todosSlice;
 // );
 export const getTodos =createAsyncThunk('todos/fetchTodos',async()=>{
     try{
-        const todo =  await axios('http://10.40.12.4:3005/todoList/getTodos')
-        if(todo) return todo.data
-        return false
+        const url = 'getTodos';
+             return callApi('GET', url);
     }
     catch(error){
         console.log(error)
         return false
     }
 })
-export const addNewTodo = createAsyncThunk(
-    'todos/addNewTodo',
-    async (todoNew) => {
-        let data = await axios.post(
-            'http://10.40.12.4:3005/todoList/insertTodo',
-            { data: todoNew },
-        );
-        if (data.data === true && data.status === 200) {
-            return todoNew;
-        } else {
-            console.log(data);
-        }
-    },
-);
+
+  
+// export const addNewTodo = createAsyncThunk(
+//     'todos/addNewTodo',
+//     async (todoNew) => {
+//         let data = await axios.post(
+//             'http://10.40.12.4:3005/todoList/insertTodo',
+//             { data: todoNew },
+//         );
+//         if (data.data === true && data.status === 200) {
+//             return todoNew;
+//         } else {
+//             console.log(data);
+//         }
+//     },
+// );
+export const addNewTodo = createAsyncThunk('todos/addNewTodo', async (todoNew) => {
+    const url = 'insertTodo';
+    const result =await callApi('POST', url, { data: todoNew });
+    if(result===true){
+        console.log(result)
+        return todoNew
+    }
+    else{
+        console.log(result)
+        return false
+    }
+  });
 export const toggleTodoStatusNew = createAsyncThunk(
     'todo/toggleTodoStatus',
     async (todo) => {
         try {
-            let data = await axios.post(
-                'http://10.40.12.4:3005/todoList/updateStatus',
-                { data: todo },
-            );
-            if (data.data !== 'error' && data.status === 200) {
-                console.log(data);
-                return todo;
-            } else {
-                console.log(data);
-                return false;
+            const url ='updateStatus'
+            const result =await callApi('POST', url, { data: todo });
+            if(result===true){
+                console.log(result)
+                return todo
             }
+            else{
+                console.log(result)
+                return false
+            }
+            // let data = await axios.post(
+            //     'http://10.40.12.4:3005/todoList/updateStatus',
+            //     { data: todo },
+            // );
+            // if (data.data !== 'error' && data.status === 200) {
+            //     console.log(data);
+            //     return todo;
+            // } else {
+            //     console.log(data);
+            //     return false;
+            // }
         } catch (err) {
             console.log(err);
         }
