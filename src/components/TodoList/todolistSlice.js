@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { callApi } from '../../ultil/ultil';
-
+import * as getTodoServices from '../../apiServices/getTodoServices'
+import * as insertTodoServies from '../../apiServices/insertTodoServices'
+import * as updateStatusTodoServices from '../../apiServices/updateStatusTodoServices'
 const todosSlice = createSlice({
     name: 'todoList',
     initialState: { status: 'idle', todoList: [] },
@@ -28,8 +29,8 @@ const todosSlice = createSlice({
             })
             .addCase(addNewTodo.fulfilled, (state, action) => {
 
-                if(action.payload)
-                state.todoList.push(action.payload);
+                if (action.payload)
+                    state.todoList.unshift(action.payload)
                 state.status = 'idle';
             })
             .addCase(toggleTodoStatusNew.pending, (state, action) => {
@@ -41,92 +42,48 @@ const todosSlice = createSlice({
                         (val) => val.id === action.payload,
                     );
                     objectFound.completed = !objectFound.completed;
-                    state.status = 'idle';
                 }
+                state.status = 'idle';
             });
     },
 });
 export default todosSlice;
-// export const getTodos = createAsyncThunk(
-//     'todos/fetchTodos',
-//     async (_, { dispatch }) => {
-//         return new Promise((resolve, reject) => {
-//             setTimeout(async () => {
-//                 try {
-//                     const response = await axios.get(
-//                         'http://10.40.12.4:3005/todoList/getTodos',
-//                     );
-//                     resolve(response.data);
-//                 } catch (error) {
-//                     reject(error);
-//                 }
-//             }, 5000);
-//         });
-//     },
-// );
-export const getTodos =createAsyncThunk('todos/fetchTodos',async()=>{
-    try{
+export const getTodos = createAsyncThunk('todos/fetchTodos', async () => {
+    try {
         const url = 'getTodos';
-             return callApi('GET', url);
+        let data = await getTodoServices.getTodoList(url)
+        return data
     }
-    catch(error){
+    catch (error) {
         console.log(error)
         return false
     }
 })
 
-  
-// export const addNewTodo = createAsyncThunk(
-//     'todos/addNewTodo',
-//     async (todoNew) => {
-//         let data = await axios.post(
-//             'http://10.40.12.4:3005/todoList/insertTodo',
-//             { data: todoNew },
-//         );
-//         if (data.data === true && data.status === 200) {
-//             return todoNew;
-//         } else {
-//             console.log(data);
-//         }
-//     },
-// );
 export const addNewTodo = createAsyncThunk('todos/addNewTodo', async (todoNew) => {
     const url = 'insertTodo';
-    const result =await callApi('POST', url, { data: todoNew });
-    if(result===true){
-        console.log(result)
-        return todoNew
+    try {
+        let data = await insertTodoServies.insertTodo(url, todoNew)
+        if (data) {
+            console.log(data)
+            return todoNew
+        }
+
+        else return false
     }
-    else{
-        console.log(result)
-        return false
+    catch (error) {
+        console.log(error)
     }
-  });
+});
 export const toggleTodoStatusNew = createAsyncThunk(
     'todo/toggleTodoStatus',
     async (todo) => {
         try {
-            const url ='updateStatus'
-            const result =await callApi('POST', url, { data: todo });
-            if(result===true){
-                console.log(result)
+            const url = 'updateStatus'
+            const data = await updateStatusTodoServices.updateStatusTodo(url, todo)
+            if (data)
                 return todo
-            }
-            else{
-                console.log(result)
-                return false
-            }
-            // let data = await axios.post(
-            //     'http://10.40.12.4:3005/todoList/updateStatus',
-            //     { data: todo },
-            // );
-            // if (data.data !== 'error' && data.status === 200) {
-            //     console.log(data);
-            //     return todo;
-            // } else {
-            //     console.log(data);
-            //     return false;
-            // }
+            else return false
         } catch (err) {
             console.log(err);
         }
