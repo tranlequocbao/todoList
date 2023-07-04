@@ -1,6 +1,7 @@
 import axios from "axios"
 const request = axios.create({
-    baseURL: 'http://10.40.12.4:3005/todoList/',
+     baseURL: 'https://10.40.12.4:3006/todoList/',
+    //baseURL: 'http://113.174.246.52:3005/todoList/',
 })
 
 export const get = async (path,option={})=>{
