@@ -48,10 +48,11 @@ const todosSlice = createSlice({
     },
 });
 export default todosSlice;
-export const getTodos = createAsyncThunk('todos/fetchTodos', async () => {
+export const getTodos = createAsyncThunk('todos/fetchTodos', async (error) => {
     try {
         const url = 'getTodos';
-        let data = await getTodoServices.getTodoList(url)
+        let data = await getTodoServices.getTodoList(url, error)
+
         return data
     }
     catch (error) {

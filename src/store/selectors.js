@@ -15,8 +15,8 @@ export const selectorTodoList = createSelector(
         if (status !== 'All') {
             todoList = todoList.filter((val) =>
                 status === 'Completed'
-                    ? val.completed === 1
-                    : val.completed === 0,
+                    ? (val.completed === 1||val.completed===true)
+                    :  (val.completed === 0||val.completed===false),
             );
         }
         if (priority.length > 0) {

@@ -9,6 +9,8 @@ import {
 } from '../../store/selectors';
 import { addNewTodo, getTodos } from './todolistSlice';
 import '../../style/todoList.css';
+import { message } from 'antd'
+
 
 export default function TodoList() {
     const dispatch = useDispatch();
@@ -18,9 +20,11 @@ export default function TodoList() {
     const todoList = useSelector(selectorTodoList);
     const statusLoading = useSelector(selectorStatusTodoList);
     useEffect(() => {
-        dispatch(getTodos());
+        dispatch(getTodos(error));
     }, []);
-
+    const error = (content) => {
+        message.error(content);
+    };
     const handleAddButtonClick = () => {
         dispatch(
             addNewTodo({
@@ -40,7 +44,7 @@ export default function TodoList() {
                 span={24}
                 style={{
                     height: '100%',
-                    width:'100%',
+                    width: '100%',
                     overflowY: 'auto',
                     marginBottom: '20px',
                 }}
